@@ -17,6 +17,7 @@ set(CS_POINTER_INCLUDES
    ${CMAKE_CURRENT_SOURCE_DIR}/src/cs_shared_array_pointer.h
    ${CMAKE_CURRENT_SOURCE_DIR}/src/cs_unique_pointer.h
    ${CMAKE_CURRENT_SOURCE_DIR}/src/cs_unique_array_pointer.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/src/cs_weak_pointer.h
 )
 
 install(
