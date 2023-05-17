@@ -27,6 +27,7 @@ target_sources(CsPointerTest
    ${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp
 
    ${CMAKE_CURRENT_SOURCE_DIR}/cs_intrusive_pointer.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/cs_nodemanager.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/cs_shared_pointer.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/cs_shared_array_pointer.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/cs_unique_pointer.cpp
