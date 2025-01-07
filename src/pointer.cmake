@@ -3,7 +3,7 @@ add_library(CsPointer::CsPointer ALIAS CsPointer)
 
 target_compile_features(CsPointer
    INTERFACE
-   cxx_std_17
+   cxx_std_20
 )
 
 target_include_directories(CsPointer
