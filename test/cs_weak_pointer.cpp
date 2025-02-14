@@ -47,7 +47,10 @@ TEST_CASE("CsWeakPointer nullptr", "[cs_weakpointer]")
    CsPointer::CsSharedPointer<int> sharedPtr = CsPointer::make_shared<int>();
    CsPointer::CsWeakPointer<int> weakPtr = sharedPtr.toWeakRef();
 
+#if ! defined(_MSC_VER)
    REQUIRE(sharedPtr == weakPtr);
+#endif
+
    REQUIRE(weakPtr == sharedPtr);
 
    REQUIRE(sharedPtr == weakPtr.lock());

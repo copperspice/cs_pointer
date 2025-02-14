@@ -165,15 +165,15 @@ TEST_CASE("CsSharedPointer convert_b", "[cs_sharedpointer]")
 TEST_CASE("CsSharedPointer copy", "[cs_sharedpointer]")
 {
    CsPointer::CsSharedPointer<int> ptr1;
-   int *rawPtr = nullptr;
+   int *rawPointer = nullptr;
 
    {
       CsPointer::CsSharedPointer<int> ptr2 = CsPointer::make_shared<int>();
-      rawPtr = ptr2.data();
-      ptr1   = ptr2;
+      rawPointer = ptr2.data();
+      ptr1 = ptr2;
    }
 
-   REQUIRE(rawPtr == ptr1.data());
+   REQUIRE(rawPointer == ptr1.data());
 }
 
 TEST_CASE("CsSharedPointer custom_deleter", "[cs_sharedpointer]")
@@ -210,9 +210,9 @@ TEST_CASE("CsSharedPointer empty", "[cs_sharedpointer]")
    REQUIRE(ptr1.use_count() == 0);
 
    //
-   CsPointer::CsSharedPointer<int> ptr2(nullptr, [](auto p) {});
-   CsPointer::CsSharedPointer<int> ptr3(nullptr, [](auto p) {}, std::allocator<int>());
-   CsPointer::CsSharedPointer<int> ptr4(static_cast<int*>(nullptr), [](auto p) {}, std::allocator<int>());
+   CsPointer::CsSharedPointer<int> ptr2(nullptr, [](auto p) { (void) p; });
+   CsPointer::CsSharedPointer<int> ptr3(nullptr, [](auto p) { (void) p; }, std::allocator<int>());
+   CsPointer::CsSharedPointer<int> ptr4(static_cast<int*>(nullptr), [](auto p) { (void) p; }, std::allocator<int>());
 
    REQUIRE(ptr2 == nullptr);
    REQUIRE(ptr3 == nullptr);
@@ -222,35 +222,35 @@ TEST_CASE("CsSharedPointer empty", "[cs_sharedpointer]")
 TEST_CASE("CsSharedPointer move_assign", "[cs_sharedpointer]")
 {
    CsPointer::CsSharedPointer<int> ptr1;
-   int *rawPtr = nullptr;
+   int *rawPointer = nullptr;
 
    {
       CsPointer::CsSharedPointer<int> ptr2(new int);
-      rawPtr = ptr2.data();
-      ptr1   = std::move(ptr2);
+      rawPointer = ptr2.data();
+      ptr1 = std::move(ptr2);
 
       REQUIRE(ptr2.is_null());
    }
 
-   REQUIRE(rawPtr == ptr1.get());
+   REQUIRE(rawPointer == ptr1.get());
 
    //
    CsPointer::CsUniquePointer<int> uniquePtr = CsPointer::make_unique<int>(42);
 
-   rawPtr = uniquePtr.get();
-   ptr1   = std::move(uniquePtr);
+   rawPointer = uniquePtr.get();
+   ptr1 = std::move(uniquePtr);
 
-   REQUIRE(rawPtr == ptr1.get());
+   REQUIRE(rawPointer == ptr1.get());
    REQUIRE(uniquePtr == nullptr);
    REQUIRE(*ptr1 == 42);
 
    //
    std::shared_ptr<int> stdSharedPtr = std::make_shared<int>(43);
 
-   rawPtr = stdSharedPtr.get();
-   ptr1   = std::move(stdSharedPtr);
+   rawPointer = stdSharedPtr.get();
+   ptr1 = std::move(stdSharedPtr);
 
-   REQUIRE(rawPtr == ptr1.get());
+   REQUIRE(rawPointer == ptr1.get());
    REQUIRE(stdSharedPtr == nullptr);
    REQUIRE(*ptr1 == 43);
 }
@@ -266,20 +266,20 @@ TEST_CASE("CsSharedPointer move_construct", "[cs_sharedpointer]")
    //
    CsPointer::CsUniquePointer<int> uniquePtr = CsPointer::make_unique<int>(42);
 
-   int *rawPtr = uniquePtr.get();
+   int *rawPointer = uniquePtr.get();
    CsPointer::CsSharedPointer<int> ptr3(std::move(uniquePtr));
 
-   REQUIRE(rawPtr == ptr3.get());
+   REQUIRE(rawPointer == ptr3.get());
    REQUIRE(uniquePtr == nullptr);
    REQUIRE(*ptr3 == 42);
 
    //
    std::shared_ptr<int> stdSharedPtr = std::make_shared<int>(43);
 
-   rawPtr = stdSharedPtr.get();
+   rawPointer = stdSharedPtr.get();
    CsPointer::CsSharedPointer<int> ptr4(std::move(stdSharedPtr));
 
-   REQUIRE(rawPtr == ptr4.get());
+   REQUIRE(rawPointer == ptr4.get());
    REQUIRE(stdSharedPtr == nullptr);
    REQUIRE(*ptr4 == 43);
 }
@@ -291,7 +291,7 @@ TEST_CASE("CsSharedPointer nullptr", "[cs_sharedpointer]")
    REQUIRE(ptr == nullptr);
    REQUIRE(nullptr == ptr);
 
-   REQUIRE(!ptr == true);
+   REQUIRE(! ptr == true);
    REQUIRE(ptr.is_null() == true);
 
    ptr = nullptr;
@@ -304,49 +304,73 @@ TEST_CASE("CsSharedPointer nullptr", "[cs_sharedpointer]")
 
 TEST_CASE("CsSharedPointer operators", "[cs_sharedpointer]")
 {
-   CsPointer::CsSharedPointer<int> ptr1;
+   CsPointer::CsSharedPointer<int> ptr1 = nullptr;
    CsPointer::CsSharedPointer<int> ptr2 = CsPointer::make_shared<int>();
    CsPointer::CsSharedPointer<int> ptr3 = ptr2;
 
+   int *ptr4 = ptr2.get();
    REQUIRE( (ptr1 == ptr2) == false);
-   REQUIRE( (ptr2 == ptr3) == true);
    REQUIRE( (ptr1 != ptr2) == true);
-   REQUIRE( (ptr2 != ptr3) == false);
-
-   REQUIRE( (ptr1.get() == ptr2) == false);
-   REQUIRE( (ptr2.get() == ptr3) == true);
-   REQUIRE( (ptr1.get() != ptr2) == true);
-   REQUIRE( (ptr2.get() != ptr3) == false);
-
-   REQUIRE( (ptr1 == ptr2.get()) == false);
-   REQUIRE( (ptr2 == ptr3.get()) == true);
-   REQUIRE( (ptr1 != ptr2.get()) == true);
-   REQUIRE( (ptr2 != ptr3.get()) == false);
-
-   REQUIRE( (ptr1 < ptr2) == true);
-   REQUIRE( (ptr2 < ptr1) == false);
-   REQUIRE( (ptr2 < ptr2) == false);
-   REQUIRE( (ptr1 < ptr1) == false);
-
-   REQUIRE( (ptr1 > ptr2) == false);
-   REQUIRE( (ptr2 > ptr1) == true);
-   REQUIRE( (ptr2 > ptr2) == false);
-   REQUIRE( (ptr1 > ptr1) == false);
-
+   REQUIRE( (ptr1 <  ptr2) == true);
+   REQUIRE( (ptr1 >  ptr2) == false);
    REQUIRE( (ptr1 <= ptr2) == true);
-   REQUIRE( (ptr2 <= ptr1) == false);
-   REQUIRE( (ptr2 <= ptr2) == true);
-   REQUIRE( (ptr1 <= ptr1) == true);
-
    REQUIRE( (ptr1 >= ptr2) == false);
-   REQUIRE( (ptr2 >= ptr1) == true);
-   REQUIRE( (ptr2 >= ptr2) == true);
-   REQUIRE( (ptr1 >= ptr1) == true);
 
+   REQUIRE( (ptr2 == ptr1) == false);
+   REQUIRE( (ptr2 != ptr1) == true);
+   REQUIRE( (ptr2 <  ptr1) == false);
+   REQUIRE( (ptr2 >  ptr1) == true);
+   REQUIRE( (ptr2 <= ptr1) == false);
+   REQUIRE( (ptr2 >= ptr1) == true);
+
+   REQUIRE( (ptr2 == ptr3) == true);
+   REQUIRE( (ptr2 != ptr3) == false);
    REQUIRE( (ptr2 <  ptr3) == false);
    REQUIRE( (ptr2 >  ptr3) == false);
    REQUIRE( (ptr2 <= ptr3) == true);
    REQUIRE( (ptr2 >= ptr3) == true);
+
+   REQUIRE( (ptr1 == ptr4) == false);
+   REQUIRE( (ptr1 != ptr4) == true);
+   REQUIRE( (ptr1 <  ptr4) == true);
+   REQUIRE( (ptr1 >  ptr4) == false);
+   REQUIRE( (ptr1 <= ptr4) == true);
+   REQUIRE( (ptr1 >= ptr4) == false);
+
+   REQUIRE( (ptr2 == ptr4) == true);
+   REQUIRE( (ptr2 != ptr4) == false);
+   REQUIRE( (ptr2 <  ptr4) == false);
+   REQUIRE( (ptr2 >  ptr4) == false);
+   REQUIRE( (ptr2 <= ptr4) == true);
+   REQUIRE( (ptr2 >= ptr4) == true);
+
+   REQUIRE( (ptr1 == nullptr) == true);
+   REQUIRE( (ptr1 != nullptr) == false);
+   REQUIRE( (ptr1 <  nullptr) == false);
+   REQUIRE( (ptr1 >  nullptr) == false);
+   REQUIRE( (ptr1 <= nullptr) == true);
+   REQUIRE( (ptr1 >= nullptr) == true);
+
+   REQUIRE( (ptr2 == nullptr) == false);
+   REQUIRE( (ptr2 != nullptr) == true);
+   REQUIRE( (ptr2 <  nullptr) == false);
+   REQUIRE( (ptr2 >  nullptr) == true);
+   REQUIRE( (ptr2 <= nullptr) == false);
+   REQUIRE( (ptr2 >= nullptr) == true);
+
+   REQUIRE( (ptr1 == ptr1) == true);
+   REQUIRE( (ptr1 != ptr1) == false);
+   REQUIRE( (ptr1 <  ptr1) == false);
+   REQUIRE( (ptr1 >  ptr1) == false);
+   REQUIRE( (ptr1 <= ptr1) == true);
+   REQUIRE( (ptr1 >= ptr1) == true);
+
+   REQUIRE( (ptr2 == ptr2) == true);
+   REQUIRE( (ptr2 != ptr2) == false);
+   REQUIRE( (ptr2 <  ptr2) == false);
+   REQUIRE( (ptr2 >  ptr2) == false);
+   REQUIRE( (ptr2 <= ptr2) == true);
+   REQUIRE( (ptr2 >= ptr2) == true);
 }
 TEST_CASE("CsSharedPointer reset", "[cs_sharedpointer]")
 {
@@ -438,4 +462,3 @@ TEST_CASE("CsSharedPointer use_count", "[cs_sharedpointer]")
    REQUIRE(ptr2.unique() == false);
    REQUIRE(ptr2.use_count() == 0);
 }
-

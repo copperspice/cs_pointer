@@ -75,19 +75,63 @@ TEST_CASE("CsUniquePointer empty", "[cs_uniquepointer]")
    REQUIRE(ptr.is_null() == true);
 }
 
-TEST_CASE("CsUniquePointer equality", "[cs_uniquepointer]")
+
+TEST_CASE("CsUniquePointer operators", "[cs_uniquepointer]")
 {
-   CsPointer::CsUniquePointer<int> ptr1 = CsPointer::make_unique<int>();
-   CsPointer::CsUniquePointer<int> ptr2(nullptr);
+   CsPointer::CsUniquePointer<int> ptr1(nullptr);
 
-   REQUIRE((ptr1 == ptr2) == false);
-   REQUIRE((ptr1 != ptr2) == true);
+   CsPointer::CsUniquePointer<int> ptr2 = CsPointer::make_unique<int>();
 
-   REQUIRE((ptr1 == ptr2.get()) == false);
-   REQUIRE((ptr1.get() == ptr2) == false);
+   int *ptr3 = ptr2.get();
 
-   REQUIRE((ptr1 != ptr2.get()) == true);
-   REQUIRE((ptr1.get() != ptr2) == true);
+   REQUIRE( (ptr1 == ptr2) == false);
+   REQUIRE( (ptr1 != ptr2) == true);
+   REQUIRE( (ptr1 <  ptr2) == true);
+   REQUIRE( (ptr1 >  ptr2) == false);
+   REQUIRE( (ptr1 <= ptr2) == true);
+   REQUIRE( (ptr1 >= ptr2) == false);
+
+   REQUIRE( (ptr2 == ptr1) == false);
+   REQUIRE( (ptr2 != ptr1) == true);
+   REQUIRE( (ptr2 <  ptr1) == false);
+   REQUIRE( (ptr2 >  ptr1) == true);
+   REQUIRE( (ptr2 <= ptr1) == false);
+   REQUIRE( (ptr2 >= ptr1) == true);
+
+   REQUIRE( (ptr2 == ptr3) == true);
+   REQUIRE( (ptr2 != ptr3) == false);
+   REQUIRE( (ptr2 <  ptr3) == false);
+   REQUIRE( (ptr2 >  ptr3) == false);
+   REQUIRE( (ptr2 <= ptr3) == true);
+   REQUIRE( (ptr2 >= ptr3) == true);
+
+   REQUIRE( (ptr1 == nullptr) == true);
+   REQUIRE( (ptr1 != nullptr) == false);
+   REQUIRE( (ptr1 <  nullptr) == false);
+   REQUIRE( (ptr1 >  nullptr) == false);
+   REQUIRE( (ptr1 <= nullptr) == true);
+   REQUIRE( (ptr1 >= nullptr) == true);
+
+   REQUIRE( (ptr2 == nullptr) == false);
+   REQUIRE( (ptr2 != nullptr) == true);
+   REQUIRE( (ptr2 <  nullptr) == false);
+   REQUIRE( (ptr2 >  nullptr) == true);
+   REQUIRE( (ptr2 <= nullptr) == false);
+   REQUIRE( (ptr2 >= nullptr) == true);
+
+   REQUIRE( (ptr1 == ptr1) == true);
+   REQUIRE( (ptr1 != ptr1) == false);
+   REQUIRE( (ptr1 <  ptr1) == false);
+   REQUIRE( (ptr1 >  ptr1) == false);
+   REQUIRE( (ptr1 <= ptr1) == true);
+   REQUIRE( (ptr1 >= ptr1) == true);
+
+   REQUIRE( (ptr2 == ptr2) == true);
+   REQUIRE( (ptr2 != ptr2) == false);
+   REQUIRE( (ptr2 <  ptr2) == false);
+   REQUIRE( (ptr2 >  ptr2) == false);
+   REQUIRE( (ptr2 <= ptr2) == true);
+   REQUIRE( (ptr2 >= ptr2) == true);
 }
 
 TEST_CASE("CsUniquePointer move_assign", "[cs_uniquepointer]")
@@ -181,4 +225,3 @@ TEST_CASE("CsUniquePointer take", "[cs_uniquepointer]")
    REQUIRE(ptr1 == nullptr);
    REQUIRE(*ptr2 == 42);
 }
-

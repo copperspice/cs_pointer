@@ -67,7 +67,7 @@ TEST_CASE("CsSharedArrayPointer constructor", "[cs_sharedarraypointer]")
 
 TEST_CASE("CsSharedArrayPointer convert", "[cs_sharedarraypointer]")
 {
-   // with bracets
+   // with brackets
    CsPointer::CsSharedArrayPointer<int[]> ptr1 = CsPointer::make_shared<int[]>(1);
    ptr1[0] = 42;
 
