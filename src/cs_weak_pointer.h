@@ -146,7 +146,6 @@ void swap(CsWeakPointer<T> &ptr1, CsWeakPointer<T> &ptr2) noexcept
    ptr1.swap(ptr2);
 }
 
-
 }   // end namespace
 
 #endif
